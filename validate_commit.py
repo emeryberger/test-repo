@@ -160,7 +160,7 @@ def check_commit_validity(commit):
     return valid
 
 # Usage example
-commit = {
+bad_commit = {
     'author': {
         'account': 'john_doe'
     },
@@ -170,6 +170,19 @@ commit = {
     'google_scholar_id': 'dbfeR3YAAAAJ',
     'name': 'Wei Zhang'
 }
+
+good_commit = {
+    'author': {
+        'account': 'john_doe'
+    },
+    'title': 'Add Emery to csrankings-a.csv', # this is still not great, wrong file
+    'modified_files': ['csrankings-a.csv'],
+    'homepage': 'https://www.emeryberger.com',
+    'google_scholar_id': 'dbfeR3YAAAAJ',
+    'name': 'Emery D. Berger'
+}
+
+commit = good_commit
 
 is_commit_valid = check_commit_validity(commit)
 if is_commit_valid:
