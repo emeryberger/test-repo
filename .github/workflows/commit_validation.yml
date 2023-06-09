@@ -5,17 +5,30 @@ on:
     branches:
       - main  # Change this to the branch you want to trigger the validation on
 
+  pull_request:
+
 jobs:
   commit_validation:
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v2.1.0
       - uses: jitterbit/get-changed-files@v1
         id: abc
         with:
           format: space-delimited
           token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Print Pull Request Diff
+      env:
+        GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+      run: python print_diff.py
 
       - name: Printing
         run: |

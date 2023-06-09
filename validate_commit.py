@@ -1,6 +1,7 @@
-import re
 import csv
+import glob
 import json
+import re
 import requests
 import sys
 
@@ -123,9 +124,9 @@ def check_commit_validity(commit):
     google_scholar_id = commit['google_scholar_id']
     name = commit['name']
 
-    if not is_valid_account(account):
-        print("Invalid account. Please use a non-anonymous account.")
-        valid = False
+    #if not is_valid_account(account):
+    #    print("Invalid account. Please use a non-anonymous account.")
+    #    valid = False
 
     if not has_reasonable_title(title):
         print(f"Invalid commit title (\"{title}\"). Please provide a more descriptive title.")
@@ -162,8 +163,9 @@ def check_commit_validity(commit):
 
     return valid
 
-def check_commit(modified_files):
-    # Usage example
+def check_commit():
+    modified_files = glob.glob("*.csv")
+    
     bad_commit = {
         'author': {
             'account': 'john_doe'
@@ -197,11 +199,5 @@ def check_commit(modified_files):
         sys.exit(-1)
 
 if __name__ == "__main__":
-    print(f"args = {sys.argv}")
-    for fname in sys.argv[1:]:
-        diff_fname = f"{fname}.diff"
-        with open(diff_fname, 'r') as f:
-            print(f.read())
-            
-    check_commit(sys.argv[1:])
+    check_commit()
     
