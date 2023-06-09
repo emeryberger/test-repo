@@ -197,6 +197,7 @@ def check_commit(modified_files):
         sys.exit(-1)
 
 if __name__ == "__main__":
+    print(f"args = {sys.argv}")
     for fname in sys.argv[1:]:
         diff_fname = f"{fname}.diff"
         with open(diff_fname, 'r') as f:
