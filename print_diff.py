@@ -3,7 +3,7 @@ import requests
 
 def get_diff(owner, repo, commit_sha, base_ref=None):
     url = f"https://api.github.com/repos/{owner}/{repo}/compare"
-    print("url = {url}")
+    print(f"url = {url}")
     params = {
         "base": base_ref or commit_sha,
         "head": commit_sha
