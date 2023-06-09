@@ -23,5 +23,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Create a requirements.txt file with the necessary dependencies
 
+      - name: Get Changed Files
+        id: changes
+        run: |
+          echo "::set-output name=files::$(git diff --name-only HEAD^)"
+
+      - name: Create Diff Files
+        run: |
+          for file in ${{ steps.changes.outputs.files }}; do
+            git diff --unified=0 HEAD^ $file > "$file.diff"
+          done
+	  
       - name: Run Commit Validation
-        run: python validate_commit.py  # Change this to the filename of your Python script
+        run: |
+          python validate_commit.py ${{ steps.changes.outputs.files }}

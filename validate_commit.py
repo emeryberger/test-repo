@@ -59,13 +59,16 @@ def has_valid_csv_files(files):
 
 def has_no_spaces_after_commas(file):
     # Check if there are no spaces after commas in the file
-    with open(file, 'r') as csv_file:
-        reader = csv.reader(csv_file)
-        for row in reader:
-            for value in row:
-                if re.search(r',\s', value):
-                    return False
-    return True
+    try:
+        with open(file, 'r') as csv_file:
+            reader = csv.reader(csv_file)
+            for row in reader:
+                for value in row:
+                    if re.search(r',\s', value):
+                        return False
+        return True
+    except:
+        return False
 
 def has_valid_homepage(homepage):
     # Check if the homepage URL is correct
@@ -159,36 +162,45 @@ def check_commit_validity(commit):
 
     return valid
 
-# Usage example
-bad_commit = {
-    'author': {
-        'account': 'john_doe'
-    },
-    'title': 'Update csrankings-a.csv',
-    'modified_files': ['csrankings-a.csv'],
-    'homepage': 'https://www.emerybergen.com',
-    'google_scholar_id': 'dbfeR3YAAAAJ',
-    'name': 'Wei Zhang'
-}
+def check_commit(modified_files):
+    # Usage example
+    bad_commit = {
+        'author': {
+            'account': 'john_doe'
+        },
+        'title': 'Update csrankings-a.csv',
+        'modified_files': ['csrankings-a.csv'],
+        'homepage': 'https://www.emerybergen.com',
+        'google_scholar_id': 'dbfeR3YAAAAJ',
+        'name': 'Wei Zhang'
+    }
 
-good_commit = {
-    'author': {
-        'account': 'john_doe'
-    },
-    'title': 'Add Emery to csrankings-a.csv', # this is still not great, wrong file
-    'modified_files': ['csrankings-a.csv'],
-    'homepage': 'https://www.emeryberger.com',
-    'google_scholar_id': 'dbfeR3YAAAAJ',
-    'name': 'Emery D. Berger'
-}
+    good_commit = {
+        'author': {
+            'account': 'john_doe'
+        },
+        'title': 'Add Emery to csrankings-a.csv', # this is still not great, wrong file
+        'modified_files': modified_files, # ['csrankings-a.csv'],
+        'homepage': 'https://www.emeryberger.com',
+        'google_scholar_id': 'dbfeR3YAAAAJ',
+        'name': 'Emery D. Berger'
+    }
 
-commit = good_commit
+    commit = good_commit
 
-is_commit_valid = check_commit_validity(commit)
-if is_commit_valid:
-    print("All sanity checks passed.")
-    sys.exit(0)
-else:
-    print(f"Commit validity: {is_commit_valid}")
-    sys.exit(-1)
+    is_commit_valid = check_commit_validity(commit)
+    if is_commit_valid:
+        print("All sanity checks passed.")
+        sys.exit(0)
+    else:
+        print(f"Commit validity: {is_commit_valid}")
+        sys.exit(-1)
+
+if __name__ == "__main__":
+    for fname in sys.argv[1:]:
+        diff_fname = f"{fname}.diff"
+        with open(diff_fname, 'r') as f:
+            print(f.read())
+            
+    check_commit(sys.argv[1:])
     
