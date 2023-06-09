@@ -3,6 +3,7 @@ import requests
 
 def get_pull_request_diff(owner, repo, pull_request_number):
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pull_request_number}/files"
+    print(f"URL = {url}")
     headers = {"Accept": "application/vnd.github.v3.diff"}
 
     response = requests.get(url, headers=headers)
