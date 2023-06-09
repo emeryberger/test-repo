@@ -45,6 +45,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Create a requirements.txt file with the necessary dependencies
 
+      - name: print-diff
+        shell: bash
+        run: |
+          git fetch origin main
+          git diff origin/main..HEAD > mydiff
+          echo "mydiff = "
+          cat mydiff
+
+      - name: Create Diff Files
+        run: |
+          for file in ${{ steps.abc.output.modified }}; do
+	    echo $file
+          done
+
       - name: Run Commit Validation
         run: |
           python validate_commit.py
