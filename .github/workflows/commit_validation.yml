@@ -56,7 +56,7 @@ jobs:
       - name: Create Diff Files
         run: |
           for file in ${{ steps.abc.output.modified }}; do
-	    echo $file
+            echo $file
           done
 
       - name: Run Commit Validation
