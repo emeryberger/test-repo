@@ -26,14 +26,15 @@ jobs:
       - name: Get Changed Files
         id: changes
         run: |
-          echo "::set-output name=files::$(git diff --name-only HEAD^)"
+          git fetch origin main --depth=1
+          git log --name-only --pretty= --diff-filter=AM -n 1 > changed_files.txt
 
       - name: Create Diff Files
         run: |
-          for file in ${{ steps.changes.outputs.files }}; do
+          for file in $(cat changed_files.txt); do
             git diff --unified=0 HEAD^ $file > "$file.diff"
           done
 
       - name: Run Commit Validation
         run: |
-          python validate_commit.py ${{ steps.changes.outputs.files }}
+          python validate_commit.py $(cat changed_files.txt)
