@@ -27,14 +27,14 @@ jobs:
         id: changes
         run: |
           git fetch origin main --depth=1
-          git log --name-only --pretty= --diff-filter=AM -n 1 > changed_files.txt
+          git diff --name-only ${{ github.sha }}^ ${{ github.sha }} > changed_files.txt
 
       - name: Create Diff Files
         run: |
           for file in $(cat changed_files.txt); do
-            git diff --unified=0 HEAD^ $file > "$file.diff"
+            git diff --unified=0 ${{ github.sha }}^ $file > "$file.diff"
           done
-
+  
       - name: Run Commit Validation
         run: |
           python validate_commit.py $(cat changed_files.txt)
