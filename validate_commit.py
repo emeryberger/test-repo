@@ -107,7 +107,8 @@ def matching_name_with_dblp(name):
         j = json.loads(response.text)
         completions = j['result']['completions']['@total']
         return int(completions)
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
+        print(f"Exception: {e}")
         return 0
 
 def is_eligible_faculty(homepage):
