@@ -5,13 +5,13 @@ import sys
 def print_csv_diffs():
     head_commit = os.getenv('GITHUB_SHA')
     base_commit = os.getenv('GITHUB_BASE_REF')
-    files_changed_command = f"git diff --name-only {base_commit} {head_commit}"
-    print(f"file_changed_command = {files_changed_command}")
+    files_changed_command = f"git diff --name-only main HEAD"
+    # files_changed_command = f"git diff --name-only {base_commit} {head_commit}"
     files_changed = os.popen(files_changed_command).read().splitlines()
-    print(f"files changed = {files_changed}")
 
     csv_files = [file for file in files_changed if file.endswith('.csv')]
 
+    print(f"files changed = {files_changed}")
     print(f"csv_files = {csv_files}")
     
     if not csv_files:
