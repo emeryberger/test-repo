@@ -23,18 +23,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Create a requirements.txt file with the necessary dependencies
 
+      - name: Get Previous Commit SHA
+        id: prev_commit
+        run: |
+          echo "::set-output name=sha::$(git log --format=format:%H --skip=1 -n 1)"
+
       - name: Get Changed Files
         id: changes
         run: |
-          git fetch origin main --depth=1
-          git diff --name-only ${{ github.sha }}^ ${{ github.sha }} > changed_files.txt
+          git diff --name-only ${{ steps.prev_commit.outputs.sha }} > changed_files.txt
 
       - name: Create Diff Files
         run: |
           for file in $(cat changed_files.txt); do
-            git diff --unified=0 ${{ github.sha }}^ $file > "$file.diff"
+            git diff --unified=0 ${{ steps.prev_commit.outputs.sha }} $file > "$file.diff"
           done
-  
+
       - name: Run Commit Validation
         run: |
-          python validate_commit.py $(cat changed_files.txt)
+          python validate_commit.py $(cat changed_files.txt)  # Change this to the filename of your Python script
