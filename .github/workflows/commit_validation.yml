@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - uses: actions/checkout@v2.1.0
       - uses: jitterbit/get-changed-files@v1
         id: abc
@@ -20,15 +19,8 @@ jobs:
           format: space-delimited
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v2
-
-      - name: Print Pull Request Diff
-        env:
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
-        run: python print_diff.py
 
       - name: Printing
         run: |
@@ -45,9 +37,6 @@ jobs:
           echo "Added+Modified:"
           echo "${{ steps.abc.outputs.added_modified }}"
 
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -56,7 +45,19 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Create a requirements.txt file with the necessary dependencies
+          pip install -r requirements.txt
+	  pip install pandas
+
+      - name: Run Commit Validation
+        run: |
+          python validate_commit.py
+	  
+      - name: Print Pull Request Diff
+        env:
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        run: python print_diff.py
 
       - name: Create Diff Files
         run: |
@@ -64,6 +65,3 @@ jobs:
             echo $file
           done
 
-      - name: Run Commit Validation
-        run: |
-          python validate_commit.py
