@@ -33,7 +33,7 @@ jobs:
           for file in ${{ steps.changes.outputs.files }}; do
             git diff --unified=0 HEAD^ $file > "$file.diff"
           done
-	  
+
       - name: Run Commit Validation
         run: |
           python validate_commit.py ${{ steps.changes.outputs.files }}
