@@ -47,6 +47,41 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pandas
+          pip install gitpython
+
+      - name: Print Diffs
+        run: |
+          python - << EOF
+          import os
+          from git import Repo
+
+          repo_path = os.environ['GITHUB_WORKSPACE']
+          repo = Repo(repo_path)
+
+          # Get the diff for each commit in the main branch
+          for commit in repo.iter_commits('main'):
+              print(f"Commit: {commit.hexsha}")
+              diff = commit.diff()
+              for d in diff:
+                  print(f"File: {d.a_path}")
+                  print(d.diff.decode('utf-8'))
+
+          # Get the diff for each pull request
+          if 'GITHUB_EVENT_PATH' in os.environ:
+              import json
+              event_path = os.environ['GITHUB_EVENT_PATH']
+              with open(event_path) as f:
+                  event = json.load(f)
+              if 'pull_request' in event:
+                  pr_number = event['pull_request']['number']
+                  pr = repo.pull_request(pr_number)
+                  print(f"Pull Request: {pr_number}")
+                  diff = pr.diff()
+                  for d in diff:
+                      print(f"File: {d.a_path}")
+                      print(d.diff.decode('utf-8'))
+
+          EOF
 
       - name: Run Commit Validation
         run: |
