@@ -214,7 +214,7 @@ def process():
 
         for chunk in d['chunks']:
             for change in chunk['changes']:
-                if change['type'] == 'AddedLine':
+                if True: # change['type'] == 'AddedLine': # for testing only
                     changed_lines[file_path].append(change)
 
     print(changed_lines)
@@ -252,7 +252,7 @@ def process():
                         print(f"Invalid homepage URL ({homepage}). Please provide a correct URL.")
                         valid = False
                 except:
-                    print(f"Processing failure - likely due to an invalid format ({line[content]}).")
+                    print(f"Processing failure - likely due to an invalid format ({line}).")
                     valid = False
 
     print(f"Valid? {valid}")
