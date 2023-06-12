@@ -35,7 +35,9 @@ jobs:
       - name: print json diff
         env:
           DIFF: ${{ steps.git-diff-action.outputs.json-diff-path }}
-        run: cat $DIFF
+        run: |
+          cat $DIFF
+          python json_to_diff.py $DIFF
 
       # Print the diff in raw git format
       - name: print raw diff
