@@ -19,8 +19,10 @@ def process():
 
         for chunk in d['chunks']:
             for change in chunk['changes']:
-                if change['type'] != 'UnchangedLine':
-                    print(change)
+                if change['type'] == 'AddedLine':
+                    changed_lines[file_path].append(change)
 
+    print(changed_lines)
+    
 if __name__ == "__main__":
     process()
