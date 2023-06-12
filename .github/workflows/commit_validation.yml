@@ -26,7 +26,7 @@ jobs:
         shell: bash
         run: |
           git fetch origin main
-          git diff origin/main..HEAD > mydiff
+          git diff origin/main..HEAD~1 > mydiff
           echo "mydiff = "
           cat mydiff
 
