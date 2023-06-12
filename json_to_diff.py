@@ -1,20 +1,26 @@
 def process():
     import json
     import sys
-    json_data = sys.argv[1]
-    
+    json_file = sys.argv[1]
+
+    with open(json_file, "r") as f:
+        json_data = f.read()
+
     data = json.loads(json_data)
 
-    # Extract file path
-    file_path = data['files'][0]['path']
+    # Extract file paths
 
-    # Extract changed lines
-    changed_lines = [change['content'] for change in data['files'][0]['chunks'][0]['changes']
-                     if change['type'] in ('AddedLine', 'DeletedLine')]
+    changed_lines = {}
+    
+    for d in data['files']:
+        file_path = d['path']
+        print(file_path)
+        changed_lines[file_path] = []
 
-    # Print the changed lines
-    for line in changed_lines:
-        print(line)
+        for chunk in d['chunks']:
+            for change in chunk['changes']:
+                if change['type'] != 'UnchangedLine':
+                    print(change)
 
 if __name__ == "__main__":
     process()
