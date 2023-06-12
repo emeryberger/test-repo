@@ -1,4 +1,5 @@
 def process():
+    import json
     import sys
     json_data = sys.argv[1]
     
