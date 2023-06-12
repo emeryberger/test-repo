@@ -232,9 +232,13 @@ def process():
         if re.match(r'csrankings-[a-z]\.csv', file):
             for l in changed_lines[file]:
                 line = l['content']
+
+                print(f"Processing {line}:")
+                
                 if re.search(r',\s', line):
                     print(f"Found a space after a comma ({line}). Please ensure there are no spaces after commas.")
                     valid = False
+                    continue
                 
                 try:
                     (name, affiliation, homepage, scholarid) = line.split(',')
