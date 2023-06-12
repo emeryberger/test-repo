@@ -230,13 +230,14 @@ def process():
 
         # Check if we are processing a `csrankings-?.csv` file.
         if re.match(r'csrankings-[a-z]\.csv', file):
-            for line in changed_lines[file]:
+            for l in changed_lines[file]:
+                line = l['content']
                 if re.search(r',\s', line):
                     print(f"Found a space after a comma ({line}). Please ensure there are no spaces after commas.")
                     valid = False
                 
                 try:
-                    (name, affiliation, homepage, scholarid) = line[content].split(',')
+                    (name, affiliation, homepage, scholarid) = line.split(',')
                     if not has_valid_google_scholar_id(scholarid):
                         print(f"Invalid Google Scholar ID ({google_scholar_id}). Please provide a valid identifier.")
                         valid = False
