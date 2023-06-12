@@ -141,20 +141,20 @@ def process():
                 try:
                     (name, affiliation, homepage, scholarid) = line.split(',')
                     if not has_valid_google_scholar_id(scholarid):
-                        print(f"Invalid Google Scholar ID ({google_scholar_id}). Please provide a valid identifier.")
+                        print(f"  Invalid Google Scholar ID ({google_scholar_id}). Please provide a valid identifier.")
                         valid = False
                     completions = matching_name_with_dblp(name)
                     if completions == 0:
-                        print(f"Invalid name ({name}). Please ensure it matches the DBLP entry.")
+                        print(f"  Invalid name ({name}). Please ensure it matches the DBLP entry.")
                         valid = False
                     if completions > 1:
-                        print(f"Invalid name ({name}). This may be a disambiguation entry.")
+                        print(f"  Invalid name ({name}). This may be a disambiguation entry.")
                         valid = False
                     if not has_valid_homepage(homepage):
-                        print(f"Invalid homepage URL ({homepage}). Please provide a correct URL.")
+                        print(f"  Invalid homepage URL ({homepage}). Please provide a correct URL.")
                         valid = False
                 except:
-                    print(f"Processing failure - likely due to an invalid format ({line}).")
+                    print(f"Processing failed.")
                     valid = False
 
     if valid:
