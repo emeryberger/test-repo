@@ -49,19 +49,6 @@ def has_reasonable_title(title):
     # Check if the title is reasonable
     return not title.startswith('Update csrankings-')
 
-def has_no_spaces_after_commas(file):
-    # Check if there are no spaces after commas in the file
-    try:
-        with open(file, 'r') as csv_file:
-            reader = csv.reader(csv_file)
-            for row in reader:
-                for value in row:
-                    if re.search(r',\s', value):
-                        return False
-        return True
-    except:
-        return False
-
 def has_valid_homepage(homepage):
     # Check if the homepage URL is correct
     # Use requests library to fetch the page and check the response
@@ -102,94 +89,6 @@ def matching_name_with_dblp(name):
         print(f"Exception: {e}")
         return 0
 
-def is_eligible_faculty(homepage):
-    # Check if the faculty member meets the inclusion criteria
-    # You may want to implement additional checks here
-    return True
-
-def check_commit_validity(commit):
-    valid = True
-    files_modified = commit['modified_files']
-    title = commit['title']
-    account = commit['author']['account']
-    homepage = commit['homepage']
-    google_scholar_id = commit['google_scholar_id']
-    name = commit['name']
-
-    #if not is_valid_account(account):
-    #    print("Invalid account. Please use a non-anonymous account.")
-    #    valid = False
-
-    if not has_reasonable_title(title):
-        print(f"Invalid commit title (\"{title}\"). Please provide a more descriptive title.")
-        valid = False
-
-    if not has_valid_csv_files(files_modified):
-        print("Invalid file modification. Please only modify allowed CSV files.")
-        valid = False
-
-    for file in files_modified:
-        if not has_no_spaces_after_commas(file):
-            print(f"Invalid file ({file}). Please ensure there are no spaces after commas.")
-            valid = False
-
-    if not has_valid_homepage(homepage):
-        print(f"Invalid homepage URL ({homepage}). Please provide a correct URL.")
-        valid = False
-
-    if not has_valid_google_scholar_id(google_scholar_id):
-        print(f"Invalid Google Scholar ID ({google_scholar_id}). Please provide a valid identifier.")
-        valid = False
-
-    completions = matching_name_with_dblp(name)
-    if completions == 0:
-        print(f"Invalid name ({name}). Please ensure it matches the DBLP entry.")
-        valid = False
-    if completions > 1:
-        print(f"Invalid name ({name}). This may be a disambiguation entry.")
-        valid = False
-
-    if not is_eligible_faculty(homepage):
-        print("Invalid faculty inclusion. Please ensure the faculty meets the criteria.")
-        valid = False
-
-    return valid
-
-def check_commit():
-    modified_files = glob.glob("*.csv")
-    
-    bad_commit = {
-        'author': {
-            'account': 'john_doe'
-        },
-        'title': 'Update csrankings-a.csv',
-        'modified_files': ['csrankings-a.csv'],
-        'homepage': 'https://www.emerybergen.com',
-        'google_scholar_id': 'dbfeR3YAAAAJ',
-        'name': 'Wei Zhang'
-    }
-
-    good_commit = {
-        'author': {
-            'account': 'john_doe'
-        },
-        'title': 'Add Emery to csrankings-a.csv', # this is still not great, wrong file
-        'modified_files': modified_files, # ['csrankings-a.csv'],
-        'homepage': 'https://www.emeryberger.com',
-        'google_scholar_id': 'dbfeR3YAAAAJ',
-        'name': 'Emery D. Berger'
-    }
-
-    commit = good_commit
-
-    is_commit_valid = check_commit_validity(commit)
-    if is_commit_valid:
-        print("All sanity checks passed.")
-        sys.exit(0)
-    else:
-        print(f"Commit validity: {is_commit_valid}")
-        sys.exit(-1)
-
 def is_valid_file(file):
     # Check if only allowed CSV files are modified
     global allowed_files
@@ -197,7 +96,6 @@ def is_valid_file(file):
         if not any(re.match(pattern, file) for pattern in allowed_files):
             return False
     return True
-
 
 def process():
     json_file = sys.argv[1]
@@ -217,11 +115,11 @@ def process():
                 if True: # change['type'] == 'AddedLine': # for testing only
                     changed_lines[file_path].append(change)
 
-    print(changed_lines)
-
     # Now process the diffs.
 
     valid = True
+
+    print("Sanity checking the commit. Please check any issues raised here.")
     
     for file in changed_lines:
         if not is_valid_file(file):
@@ -259,7 +157,11 @@ def process():
                     print(f"Processing failure - likely due to an invalid format ({line}).")
                     valid = False
 
-    print(f"Valid? {valid}")
+    if valid:
+        sys.exit(0)
+    else:
+        sys.exit(-1)
+        
     
 if __name__ == "__main__":
     process()
