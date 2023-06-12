@@ -6,7 +6,7 @@ import requests
 import sys
 
 import urllib.parse
-
+# X
 # https://dblp.org/search/publ/api?q=author%3AEmery_D._Bergem%3A&format=json
 
 def translate_name_to_dblp(name):
