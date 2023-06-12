@@ -36,14 +36,7 @@ jobs:
         env:
           DIFF: ${{ steps.git-diff-action.outputs.json-diff-path }}
         run: |
-          cat $DIFF
           python json_to_diff.py $DIFF
-
-      # Print the diff in raw git format
-      - name: print raw diff
-        env:
-          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
-        run: cat $DIFF
 
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -63,14 +56,6 @@ jobs:
           echo "Added+Modified:"
           echo "${{ steps.abc.outputs.added_modified }}"
 
-      - name: print-diff
-        shell: bash
-        run: |
-          git fetch origin main
-          git diff origin/main..HEAD > mydiff
-          echo "mydiff = "
-          cat mydiff
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -83,54 +68,6 @@ jobs:
           pip install pandas
           pip install gitpython
 
-      - name: Print Diffs
-        run: |
-          python - << EOF
-          import os
-          from git import Repo
-
-          repo_path = os.environ['GITHUB_WORKSPACE']
-          repo = Repo(repo_path)
-
-          # Get the diff for each commit in the main branch
-          for commit in repo.iter_commits('main'):
-              print(f"Commit: {commit.hexsha}")
-              diff = commit.diff()
-              for d in diff:
-                  print(f"File: {d.a_path}")
-                  print(d.diff.decode('utf-8'))
-
-          # Get the diff for each pull request
-          if 'GITHUB_EVENT_PATH' in os.environ:
-              import json
-              event_path = os.environ['GITHUB_EVENT_PATH']
-              with open(event_path) as f:
-                  event = json.load(f)
-              if 'pull_request' in event:
-                  pr_number = event['pull_request']['number']
-                  pr = repo.pull_request(pr_number)
-                  print(f"Pull Request: {pr_number}")
-                  diff = pr.diff()
-                  for d in diff:
-                      print(f"File: {d.a_path}")
-                      print(d.diff.decode('utf-8'))
-
-          EOF
-
       - name: Run Commit Validation
         run: |
           python validate_commit.py
-
-      - name: Print Pull Request Diff
-        env:
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
-        run: python print_diff.py
-
-      - name: Create Diff Files
-        run: |
-          for file in ${{ steps.abc.output.modified }}; do
-            echo $file
-          done
-
