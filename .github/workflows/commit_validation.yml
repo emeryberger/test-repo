@@ -41,7 +41,9 @@ jobs:
       - name: print raw diff
         env:
           DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
-        run: cat $DIFF      - name: Checkout Repository
+        run: cat $DIFF
+
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
       - name: Printing
